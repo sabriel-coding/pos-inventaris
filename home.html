@@ -304,16 +304,15 @@
             let inputs = element.parentElement.parentElement
             .getElementsByTagName('input');
             console.log(inputs);
-            let value = {
-                body: {
-                    'kode': inputs.kode.value,
-                    'nama_barang': inputs.nama_barang.value,
-                    'nama_peminjam': inputs.nama_peminjam.value,
-                    'kelas': inputs.kelas.value,
-                    'type': inputs.kelas.type
-                }
+            let dataPeminjam = {
+                    kode: inputs.kode.value,
+                    nama_barang: inputs.nama_barang.value,
+                    nama_peminjam: inputs.nama_peminjam.value,
+                    kelas: inputs.kelas.value,
+                    type: inputs.jumlah.value
             }
-            axios.post('http://localhost:4000/peminjam')
+            axios.post('http://localhost:4000/peminjam', dataPeminjam, config)
+            	.then((res) => console.log(res))
             // .then((message) => console.log(message));
         }
         function btnActive(elements, selected, styles) {
@@ -417,6 +416,19 @@
             dataInput
             console.log(dataInput);
         }
+        let datas = {
+        	kode: 'proyektor01',
+        	nama_barang: 'proyektok toshiba',
+        	nama_peminjam: 'gw',
+        	kelas: 'XI TKJ 3',
+        	status: 'pinjam',
+        	type: 'proyektok'
+        }
+        // axios.get('http://localhost:4000/peminjam/type/proyektok' , config)
+        // 	.then((res) => {
+        // 		console.log(res)
+        // 	})
+
     </script>
 </body>
 
