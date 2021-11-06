@@ -4,432 +4,86 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POS</title>
-    <link rel="stylesheet" href="library/fontawesome-free/css/all.min.css">
+    <title>POS INVENTARIS | SMUHBLIGO</title>
     <link rel="stylesheet" href="library/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="dist/css/style.css">
+    <link rel="stylesheet" href="library/fontawesome-free/css/all.min.css">
     <script>
-        if (!sessionStorage.getItem('token')) {
-            window.location = 'index.html';
-            console.log('nothing');
-        }
-        var config = {
-            headers: {
-                "authorization": sessionStorage.getItem('token')
-            }
-        }
+        if (!sessionStorage.getItem('token')) location = "index.html";
     </script>
 </head>
-<body class="bg-light" id="body">
-
-    <!-- Landing Page -->
-    <main class="container-fluid">
-        <div class="navbar">
-            <div class="d-flex justify-content-between py-1 px-3 flex-grow-1">
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text bg-primary text-light">
-                            <i class="fas fa-search"></i>
-                        </div>
-                    </div>
-                    <input type="text" placeholder="Cari Barang" class="form-control">
-                    <div class="input-group-append">
-                        <button class="btn btn-primary px-4">Cari</button>
-                    </div>
-                </div>
+<body>
+    <div class="container-fluid">
+        <br>
+        <div class="btn-group d-flex">
+            <button class="btn btn-primary flex-grow-1 p-5" name="pinjam" onclick="getNavbar(this)">
+                <h1 class="fas fa-list-alt"></h1>
+                <h6>PINJAM</h6>
+            </button>
+            <button class="btn btn-primary flex-grow-1 p-5" name="inventaris" onclick="getNavbar(this)">
+                <h1 class="fas fa-money-check-alt"></h1>
+                <h6>INVENTARIS</h6>
+            </button>
+        </div>
+        <br>
+        <div class="btn-group" id="btnNavbar" style="overflow-x: auto; display: flex;" hidden>
+            <button class="btn btn-primary p-5 flex-grow-1" name="qrscan" onclick="getMain(this)">
+                <h1 class="fas fa-search"></h1>
+                <h6>QR-Scan</h6>
+            </button>
+            <button class="btn btn-primary p-5 flex-grow-1" name="qrbuild" onclick="getMain(this)">
+                <h1 class="fas fa-qrcode"></h1>
+                <h6>QR-Build</h6>
+            </button>
+            <button class="btn btn-primary p-5 flex-grow-1" name="daftar" onclick="getMain(this)">
+                <h1 class="fas fa-qrcode"></h1>
+                <h6 class="text-capitalize"></h6>
+            </button>
+            <button class="btn btn-primary p-5 flex-grow-1" name="tambah" onclick="getMain(this)">
+                <h1 class="fas fa-plus"></h1>
+                <h6>Tambah</h6>
+            </button>
+            <button class="btn btn-primary p-5 flex-grow-1" name="update" onclick="getMain(this)">
+                <h1 class="fas fa-upload"></h1>
+                <h6>Update</h6>
+            </button>
+            <button class="btn btn-primary p-5 flex-grow-1" name="hapus" onclick="getMain(this)">
+                <h1 class="fas fa-trash"></h1>
+                <h6>Hapus</h6>
+            </button>
+        </div>
+        <br>
+        <div class="card" id="tableContainer" hidden>
+            <div class="card-header px-4 pt-3">
+                <h4 class="card-title font-weight-bold" id="tableTitle"></h4>
             </div>
-            <button class="btn btn-sm rounded-circle" style="width: 20px; height: 20px;">
-                <i class="fas fa-user"></i>
-            </button>
-        </div>
-        <div class="navbar justify-content-center w-100 btn-group">
-            <button class="flex-grow-1 btn btn-primary pt-5 pb-4" data-toggle="modal" data-target="#modalScan" onclick="qrScan()">
-                <h1 class="icon fas fa-search"></h1>
-                <p class="title">Scan QRCode</p>
-            </button>
-            <button class="flex-grow-1 btn btn-primary pt-5 pb-4" data-toggle="modal" data-target="#modalPinjamPreScan">
-                <h1 class="icon fal">M</h1>
-                <p class="title">Pinjam Manual</p>
-            </button>
-            <button class="flex-grow-1 btn btn-primary pt-5 pb-4" data-toggle="modal" data-target="#modalBuild">
-                <h1 class="icon fas fa-qrcode"></h1>
-                <p class="title">Build QRCode</p>
-            </button>
-        </div>
-        <div class="container-fluid">
-            <div class="card w-100">
-                <div class="card-header navbar justify-content-center w-100 btn-group p-0 mb-2" id="btnMain">
-                    <button class="w-50 btn btn-primary pt-5 pb-4" onclick="getMain('containerPeminjam', this)">
-                        <h1 class="icon fas fa-clipboard-list"></h1>
-                        <p class="title">History Peminjam</p>
-                    </button>
-                    <button class="w-50 btn btn-primary pt-5 pb-4" onclick="getMain('containerInventaris', this); mainInventaris()">
-                        <h1 class="icon fas fa-book"></h1>
-                        <p class="title">Inventaris</p>
-                    </button>
-                </div>
-                <div class="card-body p-0 border-primary w-100" style="overflow-x: auto; display: none;" id="containerPeminjam">
-                    <div class="d-flex justify-content-center btn-group border-top border-left border-right border-primary" id="btnBarPeminjam" style="border-top-left-radius: 5px; border-top-right-radius: 5px;">
-                        <a href="#" class="btn btn-primary w-100" onclick="getBtn(this)">Terbaru</a>
-                        <a href="#" class="btn btn-primary w-100" onclick="getType(this)">Laptop</a>
-                        <a href="#" class="btn btn-primary w-100" onclick="getType(this)">Proyektor</a>
-                        <a href="#" class="btn btn-primary w-100" onclick="getType(this)">Kabel</a>
-                        <a href="#" class="btn btn-primary w-100" onclick="getType(this)">Obeng</a>
-                    </div>
-                    <table id="tablePeminjam" class="table table-bordered table-hover w-100" style="display: none; min-width: min-content;">
-                        <thead class="text-center">
-                            <th class="p-2">No</th>
-                            <th class="p-2">Kode</th>
-                            <th class="p-2">Nama Barang</th>
-                            <th class="p-2">Nama Peminjam</th>
-                            <th class="p-2">Type</th>
-                            <th class="p-2">Kelas</th>
-                            <th class="p-2">Tgl Pinjam</th>
-                            <th class="p-2">Tgl Kembali</th>
-                            <th class="p-2">Status</th>
-                        </thead>
-                        <tbody id="tbodyPeminjam">
-                        </tbody>
-                    </table>
-                </div>
-                <div class="card-body p-0 border-primary w-100" style="overflow-x: auto; display: none;" id="containerInventaris">
-                    <table id="tableInventaris" class="table table-bordered table-hover w-100" style="display: none; min-width: min-content;">
-                        <thead class="text-center">
-                            <th class="p-2">Id</th>
-                            <th class="p-2">Kode</th>
-                            <th class="p-2">Nama Barang</th>
-                            <th class="p-2">QRCode</th>
-                        </thead>
-                        <tbody id="tbodyInventaris">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </main>
-
-
-    <!-- Modal -->
-    <div id="modalPinjamPreScan" class="modal" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header pb-0">
-                    <button class="btn pt-1" data-dismiss="modal" data-target="#modalScan" data-toggle="modal" style="background: none;" onclick="qrScan()">
-                        <i class="fas fa-long-arrow-alt-left"></i>
-                    </button>
-                    <h5 class="modal-title">Detail Peminjam</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <p aria-hidden="true">&times;</p>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group form-group-sm">
-                        <input type="text" name="nama_barang" class="form-control" placeholder="Nama Barang">
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <input type="text" name="kode" class="form-control" placeholder="Kode Barang">
-                    </div>
-                    <hr>
-                    <div class="form-group form-group-sm">
-                        <input type="text" name="nama_peminjam" class="form-control" placeholder="Nama Peminjam">
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <input type="text" name="kelas" class="form-control" placeholder="Kelas Peminjam">
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <input type="type" name="jumlah" class="form-control" placeholder="Type">
-                    </div>
-                    <!-- <div class="form-group form-group-sm">
-                        <input type="text" name="tgl_pinjam" autocomplete="on" class="form-control" placeholder="Tanggal Pinjam">
-                    </div> -->
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                        <button type="submit" name="pinjam" class="btn btn-primary" onclick="postPinjam(this)">Pinjam</button>
-                    </div>
-                </div>
-                <script>
-                    // var date = new Date();
-                    // console.log(Date.now().getDate())
-                </script>
+            <div class="card-body p-0" style="overflow-x: auto;">
+                <table class="table table-bordered table-hover" id="tableContent">
+                    <thead id="tableHead"></thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
             </div>
         </div>
     </div>
-    <div id="modalPinjam" class="modal" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal" id="modalContainer" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header pb-0">
-                    <button class="btn pt-1" data-dismiss="modal" data-target="#modalScan" data-toggle="modal" style="background: none;" onclick="qrScan()">
-                        <i class="fas fa-long-arrow-alt-left"></i>
-                    </button>
-                    <h5 class="modal-title">Detail Peminjam</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                <div class="modal-header" id="modalHeader">
+                    <h5 class="modal-title" id="modalTitle"></h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close" id="modalClose">
                         <p aria-hidden="true">&times;</p>
                     </button>
                 </div>
-                <div class="modal-body">
-                    <div class="form-group form-group-sm">
-                        <input type="text" name="nama_barang" class="form-control" placeholder="Nama Barang">
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <input type="text" name="kode" class="form-control" placeholder="Kode Barang">
-                    </div>
-                    <hr>
-                    <div class="form-group form-group-sm">
-                        <input type="text" name="nama_peminjam" class="form-control" placeholder="Nama Peminjam">
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <input type="text" name="kelas" class="form-control" placeholder="Kelas Peminjam">
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <input type="number" name="jumlah" class="form-control" placeholder="Jumlah Peminjam">
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <input type="datetime" name="tgl_pinjam" autocomplete="on" class="form-control" placeholder="Tanggal Pinjam">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                        <button type="submit" name="pinjam" class="btn btn-primary" onclick="pinjam(this)">Pinjam</button>
-                    </div>
-                </div>
+                <div class="modal-body" id="modalBody"></div>
+                <div class="modal-footer" id="modalFooter"></div>
             </div>
         </div>
     </div>
-    <div id="modalBuild" class="modal" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Build QRCode</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <p aria-hidden="true">&times;</p>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">
-                                <i class="fas fa-qrcode"></i>
-                            </div>
-                        </div>
-                        <input type="text" class="form-control" id="qrbuildinput" placeholder="Text">
-                        <!-- <textarea id="qrbuildinput" placeholder="Content" rows="1" class="form-control" style="overflow-y: visible;"></textarea> -->
-                        <div class="input-group-append">
-                            <button type="button" class="btn btn-primary" onclick="qrBuild()">Build</button>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-end position-relative mt-4" id="qrprintcontainer">
-                        <div class="bg w-100 d-flex justify-content-between align-items-center" style="background: url('dist/img/bg-1.jpg'); background-position: center; background-size: cover">
-                            <div class="ml-4 text-white">
-                                <h3 class="navbar-brand m-0">SMKMUHBLIGO</h3>
-                                <h6 class="">L-01-32</h6>
-                            </div>
-                            <canvas id="qrbuildcontainer" class="m-4"></canvas>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="html2pdf().set({margin: [5, 40]}).from(document.getElementById('qrprintcontainer')).save(document.getElementById('qrbuildinput').value)">Print</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="modalScan" class="modal" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Scan QRCode</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close" onclick="scanner.stop()">
-                        <p aria-hidden="true">&times;</p>
-                    </button>
-                </div>
-                <div class="modal-body" id="qrmaincontainer">
-                    <div class="d-flex justify-content-center">
-                        <video id="qrscancontainer" width="300px" class=""></video>
-                    </div>
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="scanner.stop()">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script src="library/jquery/jquery.min.js"></script>
     <script src="library/bootstrap/js/bootstrap.min.js"></script>
+    <script src="library/instascan/instascan.min.js"></script>
     <script src="library/html2pdf/html2pdf.bundle.min.js"></script>
     <script src="library/qrcode/qrcode.min.js"></script>
-    <script src="library/instascan/instascan.min.js"></script>
     <script src="library/axios/axios.min.js"></script>
-    <script>
-        // var scanner;
-        var qrData = [];
-        var scanner = new Instascan.Scanner({video: document.getElementById('qrscancontainer')});
-        function qrScan() {
-            qrData = [];
-            scanner.addListener('scan', function (content) {
-                // Tergantung Format Penulisan QRCode nya
-                if (content.search(',') > 0) qrData = content.trim().split(',');
-                else qrData[0] = content;
-                // Format Penulisan QRCode = nama Barang, kode Barang
-                scanner.stop();
-                console.log(qrData);
-                $('#modalScan').modal('hide');
-                checkPinjam();
-                $('#modalPinjam').modal('show');
-            });
-            Instascan.Camera.getCameras().then(function (cameras) {
-                if (cameras.length > 0) scanner.start(cameras[0]);
-                else console.error('No cameras found');
-            }).catch(function (e) {
-                console.error(e);
-            });
-        }
-        function qrBuild() {
-            // document.getElementById('qrbuildcontainer').innerHTML = "";
-            QRCode.toCanvas(document.getElementById('qrbuildcontainer'), document.getElementById('qrbuildinput').value);
-        }
-        function checkPinjam() {
-            let inputs = document.getElementById('modalPinjam').getElementsByTagName('input');
-            let nama_barang = inputs.nama_barang;
-            let kode = inputs.kode;
-            // console.log(inputs.kode)
-            if (qrData != '') {
-                inputs.nama_barang.value = qrData[0];
-                inputs.nama_barang.disabled = true;
-                inputs.kode.value = qrData[1];
-                inputs.kode.disabled = true;
-            }
-        }
-        function postPinjam(element) {
-            let inputs = element.parentElement.parentElement
-            .getElementsByTagName('input');
-            console.log(inputs);
-            let dataPeminjam = {
-                    kode: inputs.kode.value,
-                    nama_barang: inputs.nama_barang.value,
-                    nama_peminjam: inputs.nama_peminjam.value,
-                    kelas: inputs.kelas.value,
-                    type: inputs.jumlah.value
-            }
-            axios.post('http://localhost:4000/peminjam', dataPeminjam, config)
-            	.then((res) => console.log(res))
-            // .then((message) => console.log(message));
-        }
-        function btnActive(elements, selected, styles) {
-            var style = [];
-            if (styles.includes(' ')) style = styles.split(' ');
-            else style[0] = styles;
-            for (element of elements) {
-                if (element.classList.contains(style[0])) {
-                    for (sty of style) {
-                        element.classList.remove(sty);
-                    }
-                } if (element.innerHTML === selected) {
-                    for (sty of style) {
-                        element.classList.add(sty);
-                    }
-                }
-            }
-        }
-        function getType(element) {
-            let parent = element.parentElement.getAttribute('id');
-            let tbody = parent.replace('btnBar', 'tbody');
-            let type = element.innerHTML.trim().toLowerCase();
-            let tr = document.getElementById(tbody).getElementsByTagName('tr');
-            btnActive(document.getElementById(parent).getElementsByTagName('a'), element.innerHTML, 'btn-outline-primary border-0');
-            for (r of tr) {
-                r.style.display = '';
-                if (r.getElementsByTagName('td')[4].innerHTML == type) r.style.display = 'table-row';
-                else r.style.display = 'none';
-            }
-        }
-        function getBtn(element) {
-            let parent = element.parentElement.getAttribute('id');
-            let name = element.innerHTML.trim().toLowerCase();
-            let main = parent.replace('btnBar', '');
-            let table = parent.replace('btnBar', 'table');
-            let tbody = parent.replace('btnBar', 'tbody');
-            if (document.getElementById(table).style.display == 'none') {
-                document.getElementById(table).style.display = 'table';
-            }
-            btnActive(document.getElementById(parent).getElementsByTagName('a'), element.innerHTML, 'btn-outline-primary border-0');
-            if (name == 'terbaru') url = 'http://localhost:4000/'+main;
-            else url = 'http://localhost:4000/'+main+'/type/'+name;
-            console.log(url)
-            axios.get(url, config).then((res) => {
-                console.log(res)
-                document.getElementById(tbody).innerHTML = '';
-                let str = [];
-                if (res.data.length == 0) document.getElementById(tbody).innerHTML = '<tr><td colspan="8" align="center">Tidak ada data</td></tr>';
-                else res.data.map((item, index) => {
-                    str[index] = '<tr>';
-                    for (itemr in item) {
-                        str[index] += '<td>'+item[itemr]+'</td>';
-                    }
-                    // str[index] += '<span hidden>'+item.type+'</span>';
-                    str[index] += '</tr>';
-                });
-                for (final of str) {
-                    $('#'+tbody).append(final);
-                }
-            });
-        }
-        
-        function mainInventaris() {
-            axios.get('http://localhost:4000/Inventaris', config).then((res) => {
-                let tbody = document.getElementById('tbodyInventaris');
-                tbody.innerHTML = ''; tbody.parentElement.style.display = 'table';
-                let str = [];
-                res.data.map((item, index) => {
-                    str[index] = '<tr>';
-                    for (itemr in item) {
-                        str[index] += '<td>'+item[itemr]+'</td>';
-                    }
-                    str[index] += '</tr>';
-                });
-                for (final of str) {
-                    $('#tbodyInventaris').append(final);
-                }
-            });
-        }
-        function getMain(target, element) {
-            // target contains containerPinjaman or other 1
-            let containers = [document.getElementById('containerPeminjam'), document.getElementById('containerInventaris')];
-            let container = document.getElementById(target);
-            let buttons = element.parentElement.getElementsByTagName('button');
-            for (contain of containers) {
-                contain.style.display = "none";
-            } container.style.display = "block";
-            // btnActive(buttons, element.innerHTML, 'btn-outline-primary');
-        }
-        function pinjam(button) {
-            let btnParent = button.parentElement.parentElement;
-            let inputs = btnParent.getElementsByTagName('input');
-            let inputNames, index = 0;
-            for (input in inputs) {
-                console.log(inputs[input])
-                inputNames[input] = inputs.input.getAttribute('name');
-                index++;
-            }
-            console.log(inputNames);
-            let dataInput = []; index = 0;
-            dataInput
-            console.log(dataInput);
-        }
-        let datas = {
-        	kode: 'proyektor01',
-        	nama_barang: 'proyektok toshiba',
-        	nama_peminjam: 'gw',
-        	kelas: 'XI TKJ 3',
-        	status: 'pinjam',
-        	type: 'proyektok'
-        }
-        // axios.get('http://localhost:4000/peminjam/type/proyektok' , config)
-        // 	.then((res) => {
-        // 		console.log(res)
-        // 	})
-
-    </script>
+    <script src="dist/js/script.js"></script>
 </body>
-
 </html>
