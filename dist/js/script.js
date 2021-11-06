@@ -9,6 +9,7 @@ function getNavbar(element) {
     let daftar = document.getElementById('btnNavbar').getElementsByTagName('button').daftar;
     daftar.getElementsByTagName('h6')[0].innerHTML = "Daftar "+name;
     document.getElementById('btnNavbar').hidden = false;
+    document.getElementById('tableContainer').hidden = true;
     mainProgram = name;
     switch (name) {
         case 'pinjam': mainClass = new Pinjam(); break;
